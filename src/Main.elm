@@ -3,7 +3,7 @@ module Main exposing (Model, Msg(..), init, main, update, view)
 import Browser
 import Browser.Navigation as Nav
 import Html exposing (..)
-import Html.Attributes exposing (src)
+import Html.Attributes exposing (class, href, src)
 import Html.Events exposing (onClick)
 import Url
 
@@ -13,18 +13,14 @@ import Url
 
 
 type alias Model =
-    { a : String
-    , b : String
+    { key : Nav.Key
+    , url : Url.Url
     }
 
 
 init : flags -> Url.Url -> Nav.Key -> ( Model, Cmd msg )
 init flags url key =
-    ( { a = "a"
-      , b = "b"
-      }
-    , Cmd.none
-    )
+    ( Model key url, Cmd.none )
 
 
 
@@ -34,20 +30,21 @@ init flags url key =
 type Msg
     = LinkClicked Browser.UrlRequest
     | UrlChanged Url.Url
-    | Ram
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         LinkClicked urlRequest ->
-            ( model, Cmd.none )
+            case urlRequest of
+                Browser.Internal url ->
+                    ( model, Nav.pushUrl model.key (Url.toString url) )
+
+                Browser.External str ->
+                    ( model, Nav.load str )
 
         UrlChanged url ->
-            ( model, Cmd.none )
-
-        Ram ->
-            ( { model | b = "c" }, Cmd.none )
+            ( { model | url = url }, Cmd.none )
 
 
 
@@ -70,9 +67,11 @@ view model =
         [ img [ src "/logo.svg" ] []
         , h1 [] [ text "Your Elm App is working!" ]
         , div []
-            [ text "Render some:"
-            , text (model.a ++ " " ++ model.b)
-            , button [ onClick Ram ] [ text "click me" ]
+            [ a
+                [ href "/link"
+                , class "link"
+                ]
+                [ text "click me" ]
             ]
         ]
     }
