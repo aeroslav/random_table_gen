@@ -2,6 +2,7 @@ module Main exposing (Model, Msg(..), init, main, update, view)
 
 import Browser
 import Browser.Navigation as Nav
+import Canopy as T exposing (Node)
 import Html exposing (..)
 import Html.Attributes exposing (class, href, src)
 import Html.Events exposing (onClick)
@@ -30,6 +31,7 @@ init flags url key =
 type Msg
     = LinkClicked Browser.UrlRequest
     | UrlChanged Url.Url
+    | NoOp
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -46,12 +48,15 @@ update msg model =
         UrlChanged url ->
             ( { model | url = url }, Cmd.none )
 
+        NoOp ->
+            ( model, Cmd.none )
+
 
 
 ---- SUBS ----
 
 
-subscription : model -> Sub msg
+subscription : Model -> Sub msg
 subscription _ =
     Sub.none
 
@@ -64,17 +69,103 @@ view : Model -> Browser.Document Msg
 view model =
     { title = "RanGen"
     , body =
-        [ img [ src "/logo.svg" ] []
-        , h1 [] [ text "Your Elm App is working!" ]
-        , div []
-            [ a
-                [ href "/link"
-                , class "link"
+        [ div [ class "wrapper columns" ]
+            [ asideMenu model
+            , main_ [ class "column col-10" ]
+                [ div []
+                    [ a
+                        [ href "/link"
+                        , class "link"
+                        ]
+                        [ text "click me" ]
+                    ]
                 ]
-                [ text "click me" ]
             ]
         ]
     }
+
+
+type Role
+    = Visitor
+    | User
+    | Admin
+
+
+type alias MenuItem =
+    { label : String
+    , link : Maybe String
+    , classes : Maybe (List String)
+    , action : Maybe Msg
+    , permission : Role
+    }
+
+
+mainMenuItems : Node (Maybe MenuItem)
+mainMenuItems =
+    T.node Nothing
+        [ T.node (Just (MenuItem "Explore" Nothing Nothing Nothing Visitor))
+            [ T.leaf (Just (MenuItem "Tables" (Just "/tables") Nothing Nothing Visitor))
+            , T.leaf (Just (MenuItem "Tags" (Just "/tags") Nothing Nothing Visitor))
+            , T.leaf (Just (MenuItem "Authors" (Just "/authors") Nothing Nothing Visitor))
+            ]
+        , T.node (Just (MenuItem "Create" (Just "/create") (Just [ "create-link" ]) Nothing Visitor)) []
+        ]
+
+
+asideMenu : Model -> Html Msg
+asideMenu model =
+    aside [ class "column col-2" ]
+        [ div [ class "logo" ] [ img [ src "/logo.svg" ] [] ]
+        , renderMenu mainMenuItems
+            |> ul [ class "nav" ]
+        ]
+
+
+renderMenu : Node (Maybe MenuItem) -> List (Html Msg)
+renderMenu menuNode =
+    let
+        children =
+            T.children menuNode
+                |> List.map renderMenu
+                |> List.concat
+
+        value =
+            T.value menuNode
+
+        subMenu =
+            if List.length children > 0 then
+                ul [ class "nav" ] children
+
+            else
+                text ""
+    in
+    case value of
+        Nothing ->
+            [ subMenu ]
+
+        Just val ->
+            [ renderMenuItem val
+            , subMenu
+            ]
+
+
+renderMenuItem : MenuItem -> Html Msg
+renderMenuItem item =
+    let
+        itemClass =
+            String.join " " ("nav-item" :: Maybe.withDefault [] item.classes)
+
+        itemAction =
+            Maybe.withDefault NoOp item.action
+
+        itemLink =
+            Maybe.withDefault "" item.link
+    in
+    li
+        [ class itemClass
+        , onClick itemAction
+        ]
+        [ a [ href itemLink ] [ text item.label ] ]
 
 
 

@@ -1,0 +1,31 @@
+{
+  "name": "rangen",
+  "version": "0.0.1",
+  "description": "This project is bootstrapped with [Create Elm App](https://github.com/halfzebra/create-elm-app).",
+  "main": "src/index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "spectre.css": "^0.5.7"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aeroslav/random_table_gen.git"
+  },
+  "keywords": [
+    "elm",
+    "rpg",
+    "generator"
+  ],
+  "author": "aeroslav",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aeroslav/random_table_gen/issues"
+  },
+  "homepage": "https://github.com/aeroslav/random_table_gen#readme"
+}
