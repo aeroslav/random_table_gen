@@ -1,0 +1,41 @@
+[
+    {
+        "setName": "Random names",
+        "tables": [
+            {
+                "caption": "Male",
+                "entries": [
+                    {
+                        "value": "Tammy",
+                        "weight": 1
+                    },
+                    {
+                        "value": "Gargano",
+                        "weight": 1
+                    },
+                    {
+                        "value": "Falco",
+                        "weight": 1
+                    }
+                ]
+            },
+            {
+                "caption": "Male",
+                "entries": [
+                    {
+                        "value": "Aska",
+                        "weight": 1
+                    },
+                    {
+                        "value": "Milla",
+                        "weight": 1
+                    },
+                    {
+                        "value": "Muri",
+                        "weight": 1
+                    }
+                ]
+            }
+        ],
+    }
+]
