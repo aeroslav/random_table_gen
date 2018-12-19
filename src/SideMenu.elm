@@ -4,7 +4,7 @@ import Canopy as T exposing (Node)
 import Html exposing (..)
 import Html.Attributes exposing (class, href, src)
 import Html.Events exposing (onClick)
-import Role exposing (..)
+import Types exposing (..)
 
 
 
@@ -26,7 +26,7 @@ type alias MenuItem msg =
 
 asideMenu : { model | menuItems : MenuTree msg } -> Html msg
 asideMenu model =
-    aside [ class "column col-2" ]
+    aside [ class "column col-2 bg-secondary" ]
         [ div [ class "logo" ] [ img [ src "/logo.svg" ] [] ]
         , renderMenu model.menuItems
             |> ul [ class "nav" ]
@@ -67,7 +67,7 @@ renderMenuItem item =
         itemClass =
             [ class <| String.join " " ("nav-item" :: Maybe.withDefault [] item.classes) ]
 
-        itemAction =
+        linkAction =
             case item.action of
                 Just action ->
                     [ onClick action ]
@@ -75,12 +75,15 @@ renderMenuItem item =
                 Nothing ->
                     []
 
-        itemAttrs =
-            List.concat [ itemClass, itemAction ]
+        linkHref =
+            [ href (Maybe.withDefault "" item.link) ]
 
-        itemLink =
-            Maybe.withDefault "" item.link
+        linkAttrs =
+            List.concat [ linkHref, linkAction ]
     in
     li
-        itemAttrs
-        [ a [ href itemLink ] [ text item.label ] ]
+        itemClass
+        [ a
+            linkAttrs
+            [ text item.label ]
+        ]

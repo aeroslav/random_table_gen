@@ -1,12 +1,29 @@
+/* colors */
+:root {
+    --f-caption: 'Oswald', sans-serif; //only regular
+    --f-regular: 'Montserrat', sans-serif; //can be regular, regular italic, bold
+
+    --header-height: 2.5rem;
+
+    --c-dark-blue: #233656;
+    --c-blue: #415B76;
+    --c-light-blue: #7B9BA6;
+    --c-dark-gray: #CDD6D5;
+    --c-grey: #EEF4F2;
+    --c-dark-text: #222222;
+    --c-text: #444444;
+    --c-light-text: #777777;
+}
+
 html,
 body {
     height: 100%;
 }
 
 body {
-    font-family: 'Source Sans Pro', 'Trebuchet MS', 'Lucida Grande', 'Bitstream Vera Sans', 'Helvetica Neue', sans-serif;
+    font-family: var(--f-regular);
     margin: 0;
-    color: #293c4b;
+    color: var(--c-text);
 }
 
 .wrapper {

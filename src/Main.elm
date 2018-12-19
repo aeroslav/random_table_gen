@@ -1,4 +1,4 @@
-module Main exposing (Model, Msg(..), init, main, update, view)
+module Main exposing (Model, init, main, update, view)
 
 import Browser
 import Browser.Navigation as Nav
@@ -6,8 +6,8 @@ import Canopy as T exposing (Node)
 import Html exposing (..)
 import Html.Attributes exposing (class, href, src)
 import Html.Events exposing (onClick)
-import Role exposing (Role(..))
 import SideMenu as Aside exposing (MenuItem, MenuTree)
+import Types exposing (..)
 import Url
 
 
@@ -19,6 +19,7 @@ type alias Model =
     { key : Nav.Key
     , url : Url.Url
     , menuItems : MenuTree Msg
+    , page : PageModel
     }
 
 
@@ -29,7 +30,7 @@ init flags url key =
 
 getModel : Nav.Key -> Url.Url -> Model
 getModel key url =
-    Model key url mainMenuItems
+    Model key url mainMenuItems NotFound
 
 
 mainMenuItems : MenuTree msg
@@ -41,17 +42,12 @@ mainMenuItems =
             , T.leaf (Just (MenuItem "Authors" (Just "/authors") Nothing Nothing Visitor))
             ]
         , T.node (Just (MenuItem "Create" (Just "/create") (Just [ "create-link" ]) Nothing Visitor)) []
+        , T.node (Just (MenuItem "Profile" (Just "/profile") Nothing Nothing Visitor)) []
         ]
 
 
 
 ---- UPDATE ----
-
-
-type Msg
-    = LinkClicked Browser.UrlRequest
-    | UrlChanged Url.Url
-    | NoOp
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
