@@ -6,7 +6,7 @@ import Canopy as T exposing (Node)
 import Html exposing (..)
 import Html.Attributes exposing (class, href, src)
 import Html.Events exposing (onClick)
-import SideMenu as Aside exposing (MenuItem, MenuTree)
+import SideMenu as Aside exposing (MenuItem, MenuTree, mainMenuItems)
 import Types exposing (..)
 import Url
 
@@ -31,19 +31,6 @@ init flags url key =
 getModel : Nav.Key -> Url.Url -> Model
 getModel key url =
     Model key url mainMenuItems NotFound
-
-
-mainMenuItems : MenuTree msg
-mainMenuItems =
-    T.node Nothing
-        [ T.node (Just (MenuItem "Explore" Nothing Nothing Nothing Visitor))
-            [ T.leaf (Just (MenuItem "Tables" (Just "/tables") Nothing Nothing Visitor))
-            , T.leaf (Just (MenuItem "Tags" (Just "/tags") Nothing Nothing Visitor))
-            , T.leaf (Just (MenuItem "Authors" (Just "/authors") Nothing Nothing Visitor))
-            ]
-        , T.node (Just (MenuItem "Create" (Just "/create") (Just [ "create-link" ]) Nothing Visitor)) []
-        , T.node (Just (MenuItem "Profile" (Just "/profile") Nothing Nothing Visitor)) []
-        ]
 
 
 

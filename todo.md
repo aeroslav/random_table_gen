@@ -18,3 +18,19 @@
     - [ ] Login/logout
     - [ ] Created tables
     - [ ] Favorite tables
+
+Table set scheme:
+{
+    "setName": string,
+    "tables": [
+        "caption": string,
+        "die": ["d4" | "d6" | "d8" ... | "d100"]
+        "entries": [
+            {
+                "value": string,
+                "weight": float, // calculated or direct input
+                "target?": set
+            },
+        ]
+    ]
+}

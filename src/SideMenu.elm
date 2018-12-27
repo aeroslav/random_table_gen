@@ -1,4 +1,4 @@
-module SideMenu exposing (MenuItem, MenuTree, asideMenu, renderMenu, renderMenuItem)
+module SideMenu exposing (MenuItem, MenuTree, asideMenu, mainMenuItems, renderMenu, renderMenuItem)
 
 import Canopy as T exposing (Node)
 import Html exposing (..)
@@ -22,6 +22,19 @@ type alias MenuItem msg =
     , action : Maybe msg
     , permission : Role
     }
+
+
+mainMenuItems : MenuTree msg
+mainMenuItems =
+    T.node Nothing
+        [ T.node (Just (MenuItem "Explore" Nothing Nothing Nothing Visitor))
+            [ T.leaf (Just (MenuItem "Tables" (Just "/tables") Nothing Nothing Visitor))
+            , T.leaf (Just (MenuItem "Tags" (Just "/tags") Nothing Nothing Visitor))
+            , T.leaf (Just (MenuItem "Authors" (Just "/authors") Nothing Nothing Visitor))
+            ]
+        , T.node (Just (MenuItem "Create" (Just "/create") (Just [ "create-link" ]) Nothing Visitor)) []
+        , T.node (Just (MenuItem "Profile" (Just "/profile") Nothing Nothing Visitor)) []
+        ]
 
 
 asideMenu : { model | menuItems : MenuTree msg } -> Html msg
