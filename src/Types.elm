@@ -1,6 +1,7 @@
 module Types exposing (Msg(..), PageModel(..), Role(..))
 
 import Browser
+import Http
 import Url
 
 
@@ -21,4 +22,6 @@ type PageModel
 type Msg
     = LinkClicked Browser.UrlRequest
     | UrlChanged Url.Url
+    | Request
+    | Response (Result Http.Error String)
     | NoOp

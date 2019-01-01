@@ -6,7 +6,7 @@ import Canopy as T exposing (Node)
 import Html exposing (..)
 import Html.Attributes exposing (class, href, src)
 import Html.Events exposing (onClick)
-import SideMenu as Aside exposing (MenuItem, MenuTree, mainMenuItems)
+import Http
 import Types exposing (..)
 import Url
 
@@ -18,8 +18,8 @@ import Url
 type alias Model =
     { key : Nav.Key
     , url : Url.Url
-    , menuItems : MenuTree Msg
     , page : PageModel
+    , text : String
     }
 
 
@@ -30,7 +30,7 @@ init flags url key =
 
 getModel : Nav.Key -> Url.Url -> Model
 getModel key url =
-    Model key url mainMenuItems NotFound
+    Model key url NotFound ""
 
 
 
@@ -50,6 +50,22 @@ update msg model =
 
         UrlChanged url ->
             ( { model | url = url }, Cmd.none )
+
+        Request ->
+            ( model
+            , Http.get
+                { url = "/tables.json"
+                , expect = Http.expectString Response
+                }
+            )
+
+        Response result ->
+            case result of
+                Ok str ->
+                    ( { model | text = str }, Cmd.none )
+
+                Err _ ->
+                    ( model, Cmd.none )
 
         NoOp ->
             ( model, Cmd.none )
@@ -73,19 +89,48 @@ view model =
     { title = "RanGen"
     , body =
         [ div [ class "wrapper columns" ]
-            [ Aside.asideMenu model
+            [ asideMenu
             , main_ [ class "column col-10" ]
                 [ div []
-                    [ a
-                        [ href "/link"
-                        , class "link"
-                        ]
-                        [ text "click me" ]
+                    [ span [ onClick Request ] [ text "Send!" ]
+                    , p [] [ text model.text ]
                     ]
                 ]
             ]
         ]
     }
+
+
+asideMenu : Html msg
+asideMenu =
+    aside [ class "column col-2 bg-secondary" ]
+        [ div [ class "logo" ] [ img [ src "/logo.svg" ] [] ]
+        , ul [ class "nav" ]
+            [ menuLink "Explore" (Just "/explore")
+            , ul [ class "nav" ]
+                [ menuLink "Tables" (Just "/tables")
+                , menuLink "Tags" (Just "/tags")
+                , menuLink "Authors" (Just "/authors")
+                ]
+            , menuLink "Create" (Just "/create")
+            , menuLink "Profile" (Just "/profile")
+            ]
+        ]
+
+
+menuLink : String -> Maybe String -> Html msg
+menuLink label link =
+    let
+        linkAttrs =
+            case link of
+                Just str ->
+                    [ href str ]
+
+                Nothing ->
+                    []
+    in
+    li [ class "nav-item" ]
+        [ a linkAttrs [ text label ] ]
 
 
 
