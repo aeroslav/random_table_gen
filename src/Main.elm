@@ -1,5 +1,6 @@
 module Main exposing (Model, init, main, update, view)
 
+import Api
 import Browser
 import Browser.Navigation as Nav
 import Canopy as T exposing (Node)
@@ -7,19 +8,40 @@ import Html exposing (..)
 import Html.Attributes exposing (class, href, src)
 import Html.Events exposing (onClick)
 import Http
-import Types exposing (..)
 import Url
-
+import Pages.TablesList as TablesPage
+import Pages.Tags as TagsPage
+import Pages.Authors as AuthorsPage
 
 
 ---- MODEL ----
+
+
+type Role
+    = Visitor
+    | User
+    | Admin
+
+
+type PageModel
+    = Tables TablesPage.TablesModel
+    | Tags TagsPage.TagsModel
+    | Authors AuthorsPage.AuthorsModel
+    | NewTable
+    | NotFound
+
+
+type Msg
+    = LinkClicked Browser.UrlRequest
+    | UrlChanged Url.Url
+    | ApiMsg Api.ApiMsg
+    | NoOp
 
 
 type alias Model =
     { key : Nav.Key
     , url : Url.Url
     , page : PageModel
-    , text : String
     }
 
 
@@ -30,20 +52,21 @@ init flags url key =
 
 getModel : Nav.Key -> Url.Url -> Model
 getModel key url =
-    Model key url NotFound ""
+    Model key url (Tables )
 
 
 
 ---- UPDATE ----
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Msg -> Model -> ( Model, Cmd msg )
 update msg model =
     case msg of
         LinkClicked urlRequest ->
             case urlRequest of
                 Browser.Internal url ->
-                    ( model, Nav.pushUrl model.key (Url.toString url) )
+                    -- ( model, Nav.pushUrl model.key (Url.toString url) )
+                    ( model, Cmd.none )
 
                 Browser.External str ->
                     ( model, Nav.load str )
@@ -51,21 +74,8 @@ update msg model =
         UrlChanged url ->
             ( { model | url = url }, Cmd.none )
 
-        Request ->
-            ( model
-            , Http.get
-                { url = "/tables.json"
-                , expect = Http.expectString Response
-                }
-            )
-
-        Response result ->
-            case result of
-                Ok str ->
-                    ( { model | text = str }, Cmd.none )
-
-                Err _ ->
-                    ( model, Cmd.none )
+        ApiMsg apimsg ->
+            Api.apiUpdate model apimsg
 
         NoOp ->
             ( model, Cmd.none )
@@ -92,7 +102,7 @@ view model =
             [ asideMenu
             , main_ [ class "column col-10" ]
                 [ div []
-                    [ span [ onClick Request ] [ text "Send!" ]
+                    [ span [ onClick (ApiMsg Api.Request) ] [ text "Send!" ]
                     , p [] [ text model.text ]
                     ]
                 ]
