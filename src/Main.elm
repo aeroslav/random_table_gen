@@ -8,10 +8,11 @@ import Html exposing (..)
 import Html.Attributes exposing (class, href, src)
 import Html.Events exposing (onClick)
 import Http
-import Url
+import Pages.Authors as AuthorsPage
 import Pages.TablesList as TablesPage
 import Pages.Tags as TagsPage
-import Pages.Authors as AuthorsPage
+import Url
+
 
 
 ---- MODEL ----
@@ -52,7 +53,7 @@ init flags url key =
 
 getModel : Nav.Key -> Url.Url -> Model
 getModel key url =
-    Model key url (Tables )
+    Model key url Tables
 
 
 
@@ -96,7 +97,7 @@ subscription _ =
 
 view : Model -> Browser.Document Msg
 view model =
-    { title = "RanGen"
+    { title = "Random Tables Generator"
     , body =
         [ div [ class "wrapper columns" ]
             [ asideMenu

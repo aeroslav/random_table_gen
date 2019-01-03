@@ -1,4 +1,4 @@
-module Tables exposing (TablesModel)
+module Pages.TablesList exposing (TablesModel)
 
 import Time
 
